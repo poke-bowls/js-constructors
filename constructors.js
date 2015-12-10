@@ -147,25 +147,18 @@ Spellcaster.prototype.spendMana = function ( cost ) {
    */
 Spellcaster.prototype.invoke = function ( spell, target ) {
   if ( spell instanceof Spell || spell instanceof DamageSpell ) {
-    if ( spell instanceof DamageSpell ) {
-      console.log('adf');
-      if ( target instanceof Spellcaster ) {
-        if ( this.mana >= spell.cost ) {
-          this.mana -= spell.cost;
-          target.health -= spell.damage;
-          return true;
-          } else {
-          return false;
-          }
-          return false;
-        }
-        return false;
+    if ( this.mana >= spell.cost ) {
+      this.spendMana ( spell.cost );
+      if ( spell instanceof DamageSpell && target instanceof Spellcaster ) {
+        target.inflictDamage ( spell.damage );
+        return true;
       }
-      return false;
+      return true;
     }
+  }
     return false;
 };
-  var loren = new Spellcaster ('Loren', 300, 125 ),
-      forcePulse = new DamageSpell('Force Pulse', Math.floor(loren.mana/2), Math.floor(loren.mana/10), 'Strikes a foe with a powerful blast, knocking them to the ground.'),
+  var loren = new Spellcaster('Loren', 300, 125);
+  var gust = new Spell('Gust', loren.mana, 'Creates a gentle breeze.');
       totalMana = loren.mana;
-console.log(loren.invoke(forcePulse));
+console.log(loren.invoke(gust));
