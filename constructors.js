@@ -149,16 +149,17 @@ Spellcaster.prototype.invoke = function ( spell, target ) {
   if ( spell instanceof Spell || spell instanceof DamageSpell ) {
     if ( this.mana >= spell.cost ) {
       this.spendMana ( spell.cost );
-      if ( spell instanceof DamageSpell && target instanceof Spellcaster ) {
-        target.inflictDamage ( spell.damage );
-        return true;
+      if ( spell instanceof DamageSpell ) {
+        if ( target instanceof Spellcaster ) {
+          target.inflictDamage ( spell.damage );
+          return true;
+        } else if ( target === null ) {
+          this.mana += spell.cost;
+          return false;
+        }
       }
       return true;
     }
   }
     return false;
 };
-  var loren = new Spellcaster('Loren', 300, 125);
-  var gust = new Spell('Gust', loren.mana, 'Creates a gentle breeze.');
-      totalMana = loren.mana;
-console.log(loren.invoke(gust));
