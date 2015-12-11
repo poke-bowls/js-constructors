@@ -56,7 +56,8 @@ function DamageSpell ( name, cost, damage, description ) {
   this.damage = damage;
 }
 
-DamageSpell.prototype = Spell.prototype;
+DamageSpell.prototype = Object.create ( Spell.prototype );
+Spell.constructor.prototype = Spell;
 
 /**
  * Now that you've created some spells, let's create
@@ -146,20 +147,20 @@ Spellcaster.prototype.spendMana = function ( cost ) {
    * @return {boolean}                    Whether the spell was successfully cast.
    */
 Spellcaster.prototype.invoke = function ( spell, target ) {
-  if ( spell instanceof Spell || spell instanceof DamageSpell ) {
+  if ( spell instanceof Spell ) {
     if ( this.mana >= spell.cost ) {
-      this.spendMana ( spell.cost );
       if ( spell instanceof DamageSpell ) {
         if ( target instanceof Spellcaster ) {
           target.inflictDamage ( spell.damage );
-          return true;
-        } else if ( target === null ) {
-          this.mana += spell.cost;
+        } else {
           return false;
         }
       }
-      return true;
+      return this.spendMana (spell.cost);
+    } else {
+      return false;
     }
-  }
+  } else {
     return false;
+  }
 };
